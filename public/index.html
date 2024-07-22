@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HubSpot API Test</title>
+</head>
+<body>
+    <h1>HubSpot Visitor Identification API Test</h1>
+    <button onclick="identifyVisitor()">Identify Visitor</button>
+
+    <!-- Start of HubSpot Embed Code -->
+    <script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/5895204.js"></script>
+    <!-- End of HubSpot Embed Code -->
+    <script>
+        window.hsConversationsSettings = { loadImmediately: false };
+
+        function identifyVisitor() {
+            const userData = {
+                email: 'test@example.com',
+                firstName: 'Test',
+                lastName: 'User'
+            };
+
+            fetch('/generate-token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                window.hsConversationsSettings.identificationToken = data.token;
+                window.hsConversationsSettings.identificationEmail = userData.email;
+
+                // Use hsConversationsOnReady to ensure the HubSpot API is loaded
+                window.hsConversationsOnReady = window.hsConversationsOnReady || [];
+                window.hsConversationsOnReady.push(() => {
+                    window.HubSpotConversations.widget.load();
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching token:', error);
+            });
+        }
+    </script>
+</body>
+</html>
