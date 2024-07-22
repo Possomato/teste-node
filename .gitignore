@@ -6,3 +6,4 @@ node_modules/
 
 # Ignorar o arquivo de lock do npm
 package-lock.json
+.env
